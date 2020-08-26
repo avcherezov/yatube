@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Новая запись{% endblock %}
+{% block content %}
+{% load user_filters %}
+
+{% if post %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 p-5">
+        <div class="card">
+            <div class="card-header">Редактировать запись</div>
+            <div class="card-body">
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    {% for form in form %}
+                      <div class="form-group row">
+                        <label for="{{ form.username.id_for_label }}" class="col-md-4 col-form-label text-md-right">{{ form.label }}</label>
+                        <div class="col-md-6">
+                            {{ form|addclass:"form-control" }}
+                        </div>
+                      </div>
+
+                    {% endfor %}
+
+                    <div class="col-md-6 offset-md-4">              
+                            <button type="submit" class="btn btn-primary">
+                                Сохранить
+                            </button>
+                    </div>
+                </form>
+
+            </div> <!-- card body -->
+        </div> <!-- card -->
+    </div> <!-- col -->
+</div> <!-- row -->
+
+{% else %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 p-5">
+        <div class="card">
+            <div class="card-header">Добавить запись</div>
+            <div class="card-body">
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% for form in form %}
+                      <div class="form-group row">
+                        <label for="{{ form.username.id_for_label }}" class="col-md-4 col-form-label text-md-right">{{ form.label }}</label>
+                        <div class="col-md-6">
+                            {{ form|addclass:"form-control" }}
+                        </div>
+                      </div>
+
+                    {% endfor %}
+
+                    <div class="col-md-6 offset-md-4">              
+                            <button type="submit" class="btn btn-primary">
+                                Добавить
+                            </button>
+                    </div>
+                </form>
+
+            </div> <!-- card body -->
+        </div> <!-- card -->
+    </div> <!-- col -->
+</div> <!-- row -->
+
+{% endif %}
+
+{% endblock %}
