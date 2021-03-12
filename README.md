@@ -35,4 +35,8 @@ python manage.py runserver
 ```
 
 # Стэк
+<<<<<<< HEAD
 Django, Django ORM, Pytest, Pillow, Gunicorn, Nginx, PostgreSQL, Яндекс.Облако
+=======
+Django, Django ORM, Pytest, Pillow, Gunicorn, Nginx, PostgreSQL, Яндекс.Облако
+>>>>>>> c99ae5cebbadc9f13806096bb8df06f26cf205bc
