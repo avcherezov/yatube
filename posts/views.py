@@ -10,7 +10,12 @@ def index(request):
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    return render(request, 'index.html', {'page': page, 'paginator': paginator})
+    return render(
+        request,
+        'index.html',
+        {'page': page, 'paginator': paginator}
+    )
+
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
@@ -18,8 +23,13 @@ def group_posts(request, slug):
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    return render(request, "group.html", {"group": group, 'page': page, 'paginator': paginator})
- 
+    return render(
+        request,
+        "group.html",
+        {"group": group, 'page': page, 'paginator': paginator}
+    )
+
+
 @login_required
 def new_post(request):
     if request.method == 'POST':
@@ -33,18 +43,40 @@ def new_post(request):
         form = PostForm()
     return render(request, "post_new.html", {"form": form})
 
+
 def profile(request, username):
-    post_list = Post.objects.filter(author__username=username).order_by("-pub_date").all()
+    post_list = Post.objects.filter(
+        author__username=username).order_by("-pub_date").all()
     paginator = Paginator(post_list, 10)
-    page_number = request.GET.get('page') 
+    page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     count_post = Post.objects.filter(author__username=username).count()
     author = get_object_or_404(User, username=username)
     if request.user.is_authenticated:
-        following = Follow.objects.filter(user=request.user).filter(author=author)
-        return render(request, "profile.html", {'page': page, 'paginator': paginator, 'count_post': count_post, 'author': author, 'following': following})
+        following = Follow.objects.filter(
+            user=request.user).filter(author=author)
+        return render(
+            request,
+            "profile.html",
+            {
+                'page': page,
+                'paginator': paginator,
+                'count_post': count_post,
+                'author': author,
+                'following': following
+            }
+        )
     else:
-        return render(request, "profile.html", {'page': page, 'paginator': paginator, 'count_post': count_post, 'author': author})
+        return render(
+            request,
+            "profile.html",
+            {
+                'page': page,
+                'paginator': paginator,
+                'count_post': count_post,
+                'author': author
+            }
+        )
 
 
 def post_view(request, username, post_id):
@@ -62,13 +94,28 @@ def post_view(request, username, post_id):
             return redirect('post', username, post_id)
     else:
         form = CommentForm()
-    return render(request, "post.html", {'author': author, 'post': post, 'count_post': count_post, 'items': items, "form": form})
+    return render(
+        request,
+        "post.html",
+        {
+            'author': author,
+            'post': post,
+            'count_post': count_post,
+            'items': items,
+            "form": form
+        }
+    )
+
 
 def post_edit(request, username, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if post.author == request.user:
         if request.method == 'POST':
-            form = PostForm(request.POST or None, files=request.FILES or None, instance=post)
+            form = PostForm(
+                request.POST or None,
+                files=request.FILES or None,
+                instance=post
+            )
             if form.is_valid():
                 post = form.save(commit=False)
                 post.author = request.user
@@ -80,11 +127,14 @@ def post_edit(request, username, post_id):
     else:
         return redirect('post', username, post_id)
 
+
 def page_not_found(request, exception):
-        return render(request, "misc/404.html", {"path": request.path}, status=404)
+    return render(request, "misc/404.html", {"path": request.path}, status=404)
+
 
 def server_error(request):
-        return render(request, "misc/500.html", status=500)
+    return render(request, "misc/500.html", status=500)
+
 
 @login_required
 def add_comment(request, username, post_id):
@@ -102,6 +152,7 @@ def add_comment(request, username, post_id):
         form = CommentForm()
     return render(request, "comments.html", {"form": form})
 
+
 @login_required
 def follow_index(request):
     follow = Follow.objects.filter(user=request.user)
@@ -109,17 +160,24 @@ def follow_index(request):
     for obj in follow:
         follow_author = obj.author
         authors.append(follow_author)
-    post_list = Post.objects.filter(author__in=authors).order_by("-pub_date").all()
+    post_list = Post.objects.filter(
+        author__in=authors).order_by("-pub_date").all()
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    return render(request, "follow.html", {'page': page, 'paginator': paginator})
+    return render(
+        request,
+        "follow.html",
+        {'page': page, 'paginator': paginator}
+    )
+
 
 @login_required
 def profile_follow(request, username):
     user = get_object_or_404(User, username=username)
     author = get_object_or_404(User, username=username)
-    count = Follow.objects.filter(user=request.user).filter(author=author).count()
+    count = Follow.objects.filter(
+        user=request.user).filter(author=author).count()
     if request.user != user:
         if count == 0:
             Follow.objects.create(user=request.user, author=author)
@@ -129,11 +187,10 @@ def profile_follow(request, username):
     else:
         return redirect('profile', username)
 
+
 @login_required
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
     follow = Follow.objects.filter(user=request.user).filter(author=author)
     follow.delete()
     return redirect('profile', username)
-
-
